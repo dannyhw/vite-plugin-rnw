@@ -500,7 +500,6 @@ export function rnw(opts: Options = {}): Plugin[] {
       name: "treat-js-files-as-jsx",
       async transform(code, id) {
         if (!id.match(/\.js$/)) return null;
-
         return vite.transformWithEsbuild(code, id, {
           loader: "jsx",
           jsx: "automatic",
@@ -509,9 +508,7 @@ export function rnw(opts: Options = {}): Plugin[] {
     },
 
     commonjs(),
-
     viteBabel,
-
     viteReactRefresh,
   ];
 }
