@@ -34,9 +34,15 @@ export default defineConfig({
 });
 ```
 
-`node_modules` can be processed by this plugin when needed.
+`node_modules` can be processed by this plugin when needed
 
-the excludes default is `/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;`
+By default the excludes pattern is:
+
+```js
+/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
+```
+
+This means any package that starts with react-native, @react-native, expo, or @expo will be included and other node_modules will be excluded. But you can change this to include or exclude any package you want.
 
 ### jsxImportSource
 
@@ -86,7 +92,7 @@ Here's the [complete list of Babel parser plugins](https://babeljs.io/docs/en/ba
 
 ## Consistent components exports
 
-For React refresh to work correctly, your file should only export React components.
+For React refresh to work correctly, your file should only export React components. You can find a good explanation in the [Gatsby docs](https://www.gatsbyjs.com/docs/reference/local-development/fast-refresh/#how-it-works).
 
 If an incompatible change in exports is found, the module will be invalidated and HMR will propagate. To make it easier to export simple constants alongside your component, the module is only invalidated when their value changes.
 

@@ -34,8 +34,15 @@ export default defineConfig({
 });
 ```
 
-> `node_modules` can be processed by this plugin when needed
-> the excludes default is `/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;`
+`node_modules` can be processed by this plugin when needed
+
+By default the excludes pattern is:
+
+```js
+/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
+```
+
+This means any package that starts with react-native, @react-native, expo, or @expo will be included and other node_modules will be excluded. But you can change this to include or exclude any package you want.
 
 ### jsxImportSource
 
