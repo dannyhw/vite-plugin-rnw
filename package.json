@@ -6,7 +6,9 @@
     "examples/**/*"
   ],
   "scripts": {
-    "repo:fix": "sherif --fix"
+    "repo:fix": "sherif --fix",
+    "build": "bun --filter vite-plugin-rnw build",
+    "example": "bun --filter rnw-example dev"
   },
   "devDependencies": {
     "sherif": "^1.6.1"

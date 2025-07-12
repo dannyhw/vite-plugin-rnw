@@ -39,11 +39,6 @@ export default function App() {
       }}
     >
       <View>
-        {/* <TouchableOpacity
-          onPress={() => {
-            // Linking.openURL("https://react.dev");
-          }}
-        > */}
         <Animated.Image
           source={require("./assets/react.png")}
           alt="React logo"
@@ -56,8 +51,6 @@ export default function App() {
           ]}
           resizeMode="contain"
         />
-
-        {/* </TouchableOpacity> */}
       </View>
 
       <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
@@ -98,9 +91,6 @@ export default function App() {
           Edit src/App.tsx and save to test HMR
         </Text>
       </View>
-      <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-        Click on the Vite and React logos to learn more
-      </Text>
     </View>
   );
 }
