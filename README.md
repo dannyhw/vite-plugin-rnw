@@ -10,7 +10,7 @@ A vite plugin for React Native Web projects. (edited from a version of the react
 ```js
 // vite.config.js
 import { defineConfig } from "vite";
-import rnw from "vite-plugin-rnw";
+import { rnw } from "vite-plugin-rnw";
 
 export default defineConfig({
   plugins: [rnw()],
@@ -25,7 +25,7 @@ Includes `.js`, `.jsx`, `.ts` & `.tsx` by default. This option can be used to ad
 
 ```js
 import { defineConfig } from "vite";
-import rnw from "vite-plugin-rnw";
+import { rnw } from "vite-plugin-rnw";
 
 export default defineConfig({
   plugins: [rnw({ include: /\.(js|jsx|ts|tsx)$/ })],

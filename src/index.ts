@@ -201,7 +201,7 @@ const getInitialOptions = (opts: Options): Partial<vite.InlineConfig> => {
   }
 };
 
-export default function viteReactNativeWeb(opts: Options = {}): Plugin[] {
+export function rnw(opts: Options = {}): Plugin[] {
   const include = opts.include ?? defaultIncludeRE;
   const exclude = opts.exclude ?? defaultExcludeRE;
   const filter = createFilter(include, exclude);
@@ -516,7 +516,7 @@ export default function viteReactNativeWeb(opts: Options = {}): Plugin[] {
   ];
 }
 
-viteReactNativeWeb.preambleCode = preambleCode;
+rnw.preambleCode = preambleCode;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const loadedPlugin = new Map<string, any>();
