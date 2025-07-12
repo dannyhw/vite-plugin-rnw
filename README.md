@@ -1,6 +1,8 @@
 # vite-plugin-rnw
 
-A vite plugin for React Native Web projects. (edited from a version of the react plugin)
+A vite plugin for React Native Web projects.
+
+This plugin is based on the [react plugin](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md)
 
 - enable [Fast Refresh](https://www.npmjs.com/package/react-refresh) in development (requires react >= 16.9)
 - use the [automatic JSX runtime](https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
