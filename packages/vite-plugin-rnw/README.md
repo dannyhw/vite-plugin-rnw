@@ -34,8 +34,9 @@ export default defineConfig({
 });
 ```
 
-> `node_modules` can be processed by this plugin when needed
-> the excludes default is `/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;`
+`node_modules` can be processed by this plugin when needed.
+
+the excludes default is `/\/node_modules\/(?!react-native|@react-native|expo|@expo)/;`
 
 ### jsxImportSource
 
