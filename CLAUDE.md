@@ -109,4 +109,7 @@ This solution combines:
 1. **Rollup's "safest" preset** - avoids aggressive optimizations that cause array extensibility issues
 2. **Explicit side-effects preservation** - ensures critical runtime components aren't removed during tree-shaking
 
-The result is a build that works correctly with NativeWind while maintaining optimal bundle sizes.
+### React Native Reanimated Compatibility
+The plugin also includes robust handling for React Native Reanimated's webUtils files, automatically transforming problematic `export let` + `try/catch` + `require` patterns into proper ESM imports/exports during production builds. This ensures compatibility with modern bundlers while maintaining runtime functionality.
+
+The result is a build that works correctly with both NativeWind and React Native Reanimated while maintaining optimal bundle sizes.

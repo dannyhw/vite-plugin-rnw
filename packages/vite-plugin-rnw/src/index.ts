@@ -21,6 +21,7 @@ import {
   exactRegex,
   makeIdFiltersToMatchWithQuery,
 } from "@rolldown/pluginutils";
+import { transformReanimatedWebUtils } from "./transforms";
 
 import type { BuildOptions, UserConfig } from "vite";
 
@@ -405,24 +406,9 @@ export function rnw(opts: Options = {}): Plugin[] {
 
         const babel = await loadBabel();
         let toTransform = code;
-        // this is pain and I hate it
-        if (
-          isProduction &&
-          id.includes("node_modules/react-native-reanimated") &&
-          id.includes("ReanimatedModule/js-reanimated/webUtils") &&
-          code.includes("require")
-        ) {
-          toTransform = `
 
-            import createReactDOMStyle from 'react-native-web/dist/exports/StyleSheet/compiler/createReactDOMStyle';
-            import {
-              createTextShadowValue,
-              createTransformValue,
-            } from 'react-native-web/dist/exports/StyleSheet/preprocess';
-
-            export { createReactDOMStyle, createTextShadowValue, createTransformValue };
-          `;
-        }
+        // Apply React Native Reanimated webUtils transformation if needed
+        toTransform = transformReanimatedWebUtils(toTransform, code, id, isProduction);
 
         const result = await babel.transformAsync(toTransform, {
           ...babelOptions,
@@ -618,3 +604,4 @@ function getReactCompilerRuntimeModule(
 function ensureArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
+
