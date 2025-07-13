@@ -9,9 +9,11 @@ import Toast from "react-native-toast-message";
 import { AnimatedLogo } from "./components/animated";
 import { DatePicker } from "./components/datepicker";
 import { ExpoImageExample } from "./components/expo-image";
+import { Ball } from "./components/gesture";
 import { NWButton } from "./components/nativewind";
 import Toast2 from "./components/toast";
 import "./global.css";
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function App() {
@@ -87,7 +89,10 @@ export default function App() {
         <ExpoImageExample />
 
         <Toast />
+
         <Toast2 />
+
+        <Ball />
       </View>
     </View>
   );
