@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
   withSequence,
@@ -15,8 +15,6 @@ import Toast2 from "./components/toast";
 import { SkiaLoader } from "./components/skialoader";
 import "./global.css";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export default function App() {
   const [count, setCount] = useState(0);
   const scale = useSharedValue(1);
@@ -30,56 +28,55 @@ export default function App() {
         backgroundColor: "#242424",
         width: "100%",
         height: "100%",
-        gap: 32,
         padding: 80,
       }}
     >
-      <View>
-        <AnimatedLogo />
-      </View>
+      <AnimatedLogo />
 
-      <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "white",
+          marginVertical: 32,
+        }}
+      >
         Vite + React Native
       </Text>
 
-      <View
-        style={{
-          flexDirection: "column",
-          gap: 32,
-          alignItems: "center",
-          justifyContent: "center",
+      <Pressable
+        onPress={() => {
+          setCount((count) => count + 1);
+          scale.value = withSequence(
+            withTiming(1.2, { duration: 200 }),
+            withTiming(1, { duration: 200 })
+          );
         }}
       >
-        <AnimatedPressable
-          onPress={() => {
-            setCount((count) => count + 1);
-            scale.value = withSequence(
-              withTiming(1.2, { duration: 200 }),
-              withTiming(1, { duration: 200 })
-            );
-          }}
+        <Animated.View
           style={[
-            { transform: [{ scale: scale }] },
             {
               backgroundColor: "grey",
               paddingHorizontal: 8,
               paddingVertical: 4,
               borderRadius: 8,
-              userSelect: "none",
             },
+            { transform: [{ scale: scale }] },
           ]}
         >
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
             count is {count}
           </Text>
-        </AnimatedPressable>
+        </Animated.View>
+      </Pressable>
 
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-          Edit src/App.tsx and save to test HMR
-        </Text>
-      </View>
-
-      <View style={{ gap: 32, flexDirection: "column" }}>
+      <View style={{ gap: 32, flexDirection: "column", marginTop: 32 }}>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
           Examples
         </Text>

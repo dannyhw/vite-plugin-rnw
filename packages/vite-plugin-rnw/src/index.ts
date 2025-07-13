@@ -246,7 +246,8 @@ export function rnw(opts: Options = {}): Plugin[] {
           "process.env.NODE_ENV": JSON.stringify(
             process.env.NODE_ENV || env.mode
           ),
-
+          EXPO_OS: JSON.stringify("web"),
+          "process.env.EXPO_OS": JSON.stringify("web"),
           "global.Error": "Error",
         },
 
@@ -408,7 +409,12 @@ export function rnw(opts: Options = {}): Plugin[] {
         let toTransform = code;
 
         // Apply React Native Reanimated webUtils transformation if needed
-        toTransform = transformReanimatedWebUtils(toTransform, code, id, isProduction);
+        toTransform = transformReanimatedWebUtils(
+          toTransform,
+          code,
+          id,
+          isProduction
+        );
 
         const result = await babel.transformAsync(toTransform, {
           ...babelOptions,
@@ -604,4 +610,3 @@ function getReactCompilerRuntimeModule(
 function ensureArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
-
