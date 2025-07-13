@@ -18,4 +18,10 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      // required for skia web
+      "react-native/Libraries/Image/AssetRegistry": "./stub.js",
+    },
+  },
 });

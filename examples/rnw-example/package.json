@@ -21,7 +21,8 @@
     "react-native-toast-message": "^2.3.3",
     "react-native-web": "^0.20.0",
     "tailwindcss": "^3.4.14",
-    "react-native-gesture-handler": "^2.27.1"
+    "react-native-gesture-handler": "^2.27.1",
+    "@shopify/react-native-skia": "^2.1.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",

@@ -12,6 +12,7 @@ import { ExpoImageExample } from "./components/expo-image";
 import { Ball } from "./components/gesture";
 import { NWButton } from "./components/nativewind";
 import Toast2 from "./components/toast";
+import { SkiaLoader } from "./components/skialoader";
 import "./global.css";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -29,7 +30,8 @@ export default function App() {
         backgroundColor: "#242424",
         width: "100%",
         height: "100%",
-        gap: 10,
+        gap: 32,
+        padding: 80,
       }}
     >
       <View>
@@ -43,7 +45,7 @@ export default function App() {
       <View
         style={{
           flexDirection: "column",
-          gap: 10,
+          gap: 32,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -77,12 +79,10 @@ export default function App() {
         </Text>
       </View>
 
-      <View style={{ gap: 10, flexDirection: "column" }}>
+      <View style={{ gap: 32, flexDirection: "column" }}>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
           Examples
         </Text>
-
-        <DatePicker />
 
         <NWButton onPress={() => {}} text="nativewind button" />
 
@@ -90,9 +90,25 @@ export default function App() {
 
         <Toast />
 
+        <Text style={{ fontSize: 12, color: "white" }}>Toast</Text>
         <Toast2 />
 
+        <Text style={{ fontSize: 12, color: "white" }}>Gesture Handler</Text>
         <Ball />
+
+        <Text style={{ fontSize: 12, color: "white" }}>Skia Web Example</Text>
+        <View
+          style={{
+            width: "100%",
+
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <SkiaLoader />
+        </View>
+
+        <DatePicker />
       </View>
     </View>
   );
