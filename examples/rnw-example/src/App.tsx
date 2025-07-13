@@ -1,34 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
-  useAnimatedStyle,
   useSharedValue,
-  withRepeat,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { DatePicker } from "./components/datepicker";
-import { NWButton } from "./components/nativewind";
-import { ExpoImageExample } from "./components/expo-image";
-import Toast2 from "./components/toast";
 import Toast from "react-native-toast-message";
+import { AnimatedLogo } from "./components/animated";
+import { DatePicker } from "./components/datepicker";
+import { ExpoImageExample } from "./components/expo-image";
+import { NWButton } from "./components/nativewind";
+import Toast2 from "./components/toast";
 import "./global.css";
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function App() {
   const [count, setCount] = useState(0);
   const scale = useSharedValue(1);
-  const rotate = useSharedValue(0);
-
-  useEffect(() => {
-    rotate.value = withRepeat(withTiming(360, { duration: 3000 }), -1, false);
-  }, [rotate]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotate: `${rotate.value}deg` }],
-    };
-  });
 
   return (
     <View
@@ -43,18 +31,7 @@ export default function App() {
       }}
     >
       <View>
-        <Animated.Image
-          source={require("./assets/react.png")}
-          alt="React logo"
-          style={[
-            {
-              width: 100,
-              height: 100,
-            },
-            animatedStyle,
-          ]}
-          resizeMode="contain"
-        />
+        <AnimatedLogo />
       </View>
 
       <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
