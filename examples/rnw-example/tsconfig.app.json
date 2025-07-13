@@ -6,7 +6,6 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "jsxImportSource": "nativewind",
 
     /* Bundler mode */
     "moduleResolution": "bundler",

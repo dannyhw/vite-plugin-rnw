@@ -251,7 +251,11 @@ export function rnw(opts: Options = {}): Plugin[] {
 
         optimizeDeps: {
           ...initialOptions.optimizeDeps,
-          include: ["react-native-reanimated"],
+          include: [
+            "react-native-reanimated",
+            // Include react-native-css-interop in optimization to handle it during dev
+            "react-native-css-interop",
+          ],
           esbuildOptions: {
             ...initialOptions.optimizeDeps?.esbuildOptions,
             resolveExtensions: extensions,
@@ -269,12 +273,15 @@ export function rnw(opts: Options = {}): Plugin[] {
 
         build: {
           rollupOptions: {
+            // Use safest tree-shaking preset to avoid extensibility issues
+            treeshake: "safest",
             plugins: [
               {
                 name: "nativewind-fix",
                 async transform(code, id) {
+                  // Preserve side-effects-only files in react-native-css-interop
                   if (
-                    id.includes("nativewind") &&
+                    id.includes("react-native-css-interop") &&
                     id.includes("runtime/components.js")
                   ) {
                     return { moduleSideEffects: "no-treeshake" };
