@@ -7,6 +7,8 @@ import type * as babelCore from "@babel/core";
 import type { ParserOptions, TransformOptions } from "@babel/core";
 import { createFilter } from "vite";
 import * as vite from "vite";
+// @ts-expect-error no types
+import { esbuildFlowPlugin, flowPlugin } from "@bunchtogether/vite-plugin-flow";
 import commonjs from "vite-plugin-commonjs";
 import type { Plugin, ResolvedConfig } from "vite";
 import {
@@ -249,13 +251,44 @@ export function rnw(opts: Options = {}): Plugin[] {
 
         optimizeDeps: {
           ...initialOptions.optimizeDeps,
-          include: ["react-native-reanimated"],
+          include: [
+            "react-native-reanimated",
+            // Include react-native-css-interop in optimization to handle it during dev
+            "react-native-css-interop",
+          ],
           esbuildOptions: {
             ...initialOptions.optimizeDeps?.esbuildOptions,
             resolveExtensions: extensions,
             loader: {
               ".js": "jsx",
             },
+            plugins: [
+              esbuildFlowPlugin(
+                new RegExp(/\.(flow|jsx?)$/),
+                (_path: string) => "jsx"
+              ),
+            ],
+          },
+        },
+
+        build: {
+          rollupOptions: {
+            // Use safest tree-shaking preset to avoid extensibility issues
+            treeshake: "safest",
+            plugins: [
+              {
+                name: "nativewind-fix",
+                async transform(code, id) {
+                  // Preserve side-effects-only files in react-native-css-interop
+                  if (
+                    id.includes("react-native-css-interop") &&
+                    id.includes("runtime/components.js")
+                  ) {
+                    return { moduleSideEffects: "no-treeshake" };
+                  }
+                },
+              },
+            ],
           },
         },
 
@@ -406,6 +439,7 @@ export function rnw(opts: Options = {}): Plugin[] {
           parserOpts: {
             ...babelOptions.parserOpts,
             sourceType: "module",
+
             allowAwaitOutsideFunction: true,
             plugins: parserPlugins,
           },
@@ -496,6 +530,9 @@ export function rnw(opts: Options = {}): Plugin[] {
   };
 
   return [
+    flowPlugin({
+      exclude,
+    }),
     {
       name: "treat-js-files-as-jsx",
       async transform(code, id) {

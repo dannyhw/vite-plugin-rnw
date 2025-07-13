@@ -7,16 +7,20 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-
+import { DatePicker } from "./components/datepicker";
+import { NWButton } from "./components/nativewind";
+import { ExpoImageExample } from "./components/expo-image";
+import Toast2 from "./components/toast";
+import Toast from "react-native-toast-message";
+import "./global.css";
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const reactImage = require("./assets/react.png");
-console.log(reactImage);
+
 export default function App() {
   const [count, setCount] = useState(0);
   const scale = useSharedValue(1);
   const rotate = useSharedValue(0);
+
   useEffect(() => {
-    console.log("reactImage", reactImage);
     rotate.value = withRepeat(withTiming(360, { duration: 3000 }), -1, false);
   }, [rotate]);
 
@@ -56,6 +60,7 @@ export default function App() {
       <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
         Vite + React Native
       </Text>
+
       <View
         style={{
           flexDirection: "column",
@@ -87,9 +92,25 @@ export default function App() {
             count is {count}
           </Text>
         </AnimatedPressable>
+
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
           Edit src/App.tsx and save to test HMR
         </Text>
+      </View>
+
+      <View style={{ gap: 10, flexDirection: "column" }}>
+        <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+          Examples
+        </Text>
+
+        <DatePicker />
+
+        <NWButton onPress={() => {}} text="nativewind button" />
+
+        <ExpoImageExample />
+
+        <Toast />
+        <Toast2 />
       </View>
     </View>
   );
