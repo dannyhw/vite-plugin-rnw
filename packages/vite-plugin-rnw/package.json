@@ -53,9 +53,11 @@
   },
   "dependencies": {
     "@babel/core": "^7.28.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.27.1",
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
     "@babel/plugin-transform-react-jsx-self": "^7.27.1",
     "@babel/plugin-transform-react-jsx-source": "^7.27.1",
+    "@bunchtogether/vite-plugin-flow": "^1.0.2",
     "@rolldown/pluginutils": "1.0.0-beta.24",
     "@types/babel__core": "^7.20.5",
     "react-refresh": "^0.17.0",

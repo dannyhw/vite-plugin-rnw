@@ -7,6 +7,8 @@ import type * as babelCore from "@babel/core";
 import type { ParserOptions, TransformOptions } from "@babel/core";
 import { createFilter } from "vite";
 import * as vite from "vite";
+// @ts-expect-error no types
+import { esbuildFlowPlugin, flowPlugin } from "@bunchtogether/vite-plugin-flow";
 import commonjs from "vite-plugin-commonjs";
 import type { Plugin, ResolvedConfig } from "vite";
 import {
@@ -256,6 +258,30 @@ export function rnw(opts: Options = {}): Plugin[] {
             loader: {
               ".js": "jsx",
             },
+            plugins: [
+              esbuildFlowPlugin(
+                new RegExp(/\.(flow|jsx?)$/),
+                (_path: string) => "jsx"
+              ),
+            ],
+          },
+        },
+
+        build: {
+          rollupOptions: {
+            plugins: [
+              {
+                name: "nativewind-fix",
+                async transform(code, id) {
+                  if (
+                    id.includes("nativewind") &&
+                    id.includes("runtime/components.js")
+                  ) {
+                    return { moduleSideEffects: "no-treeshake" };
+                  }
+                },
+              },
+            ],
           },
         },
 
@@ -406,6 +432,7 @@ export function rnw(opts: Options = {}): Plugin[] {
           parserOpts: {
             ...babelOptions.parserOpts,
             sourceType: "module",
+
             allowAwaitOutsideFunction: true,
             plugins: parserPlugins,
           },
@@ -496,6 +523,9 @@ export function rnw(opts: Options = {}): Plugin[] {
   };
 
   return [
+    flowPlugin({
+      exclude,
+    }),
     {
       name: "treat-js-files-as-jsx",
       async transform(code, id) {
@@ -539,7 +569,7 @@ function createBabelOptions(rawOptions?: BabelOptions) {
   } as ReactBabelOptions;
 
   babelOptions.plugins ||= [];
-  babelOptions.presets ||= [];
+  babelOptions.presets = [...(babelOptions.presets ?? [])];
   babelOptions.overrides ||= [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   babelOptions.parserOpts ||= {} as any;

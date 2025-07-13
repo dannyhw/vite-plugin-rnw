@@ -2,8 +2,8 @@
   "name": "dhw-rnw",
   "version": "0.0.1",
   "workspaces": [
-    "packages/**/*",
-    "examples/**/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "repo:fix": "sherif --fix",

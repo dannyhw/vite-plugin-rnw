@@ -6,6 +6,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "jsxImportSource": "nativewind",
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -23,7 +24,9 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "types": ["./nativewind-env.d.ts"]
   },
   "include": ["src"]
 }
