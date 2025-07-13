@@ -67,3 +67,46 @@ export default defineConfig({
 - Built with tsdown for TypeScript compilation
 - Supports Vite versions 4.x through 7.x
 - The example app demonstrates integration with NativeWind, Expo modules, and React Native community packages
+
+## Known Issues and Fixes
+
+### NativeWind Build Issues
+**Issue**: When using NativeWind with `jsxImportSource: "nativewind"`, production builds fail with "Cannot add property 0, object is not extensible" errors.
+
+**Root Cause**: The error occurs due to array modification patterns in `react-native-css-interop` (NativeWind's dependency) that Rollup's tree-shaking analysis cannot handle properly. Specifically, patterns like:
+```javascript
+const specificity = [];
+specificity[SpecificityIndex.Inline] = 1;
+```
+
+**Solution**: The plugin automatically applies the `treeshake: 'safest'` configuration to prevent Rollup from performing aggressive optimizations that cause these extensibility errors. This is applied automatically - no user configuration required.
+
+**Implementation**: In `src/index.ts`, the plugin's build configuration includes:
+```typescript
+build: {
+  rollupOptions: {
+    // Use safest tree-shaking preset to avoid extensibility issues
+    treeshake: 'safest',
+    plugins: [
+      {
+        name: "nativewind-fix",
+        async transform(code, id) {
+          // Preserve side-effects-only files in react-native-css-interop
+          if (
+            id.includes("react-native-css-interop") &&
+            id.includes("runtime/components.js")
+          ) {
+            return { moduleSideEffects: "no-treeshake" };
+          }
+        },
+      },
+    ],
+  }
+}
+```
+
+This solution combines:
+1. **Rollup's "safest" preset** - avoids aggressive optimizations that cause array extensibility issues
+2. **Explicit side-effects preservation** - ensures critical runtime components aren't removed during tree-shaking
+
+The result is a build that works correctly with NativeWind while maintaining optimal bundle sizes.
