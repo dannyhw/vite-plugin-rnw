@@ -11,6 +11,7 @@ import { DatePicker } from "./components/datepicker";
 import { NWButton } from "./components/nativewind";
 import { ExpoImageExample } from "./components/expo-image";
 import Toast2 from "./components/toast";
+import Toast from "react-native-toast-message";
 import "./global.css";
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -108,6 +109,7 @@ export default function App() {
 
         <ExpoImageExample />
 
+        <Toast />
         <Toast2 />
       </View>
     </View>

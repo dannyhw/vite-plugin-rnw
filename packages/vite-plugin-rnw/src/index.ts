@@ -576,7 +576,7 @@ function createBabelOptions(rawOptions?: BabelOptions) {
   } as ReactBabelOptions;
 
   babelOptions.plugins ||= [];
-  babelOptions.presets = [...(babelOptions.presets ?? [])];
+  babelOptions.presets ||= [];
   babelOptions.overrides ||= [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   babelOptions.parserOpts ||= {} as any;
