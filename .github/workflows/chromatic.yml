@@ -18,3 +18,4 @@ jobs:
         uses: chromaui/action@latest
         with:
           projectToken: chpt_dbbbee77ced9662
+          workingDir: examples/rnw-example
