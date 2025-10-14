@@ -12,9 +12,8 @@
     "chromatic": "chromatic --exit-zero-on-changes --project-token=chpt_dbbbee77ced9662"
   },
   "dependencies": {
-    "@react-native-community/datetimepicker": "^8.4.5",
+    "@react-native-community/datetimepicker": "8.4.2",
     "@shopify/react-native-skia": "2.2.13",
-    "expo-image": "^3.0.9",
     "nativewind": "^4.2.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -35,7 +34,8 @@
     "@rn-primitives/slot": "^1.2.0",
     "@react-navigation/native": "^7.1.18",
     "@rn-primitives/label": "^1.2.0",
-    "@radix-ui/react-label": "^2.1.7"
+    "@radix-ui/react-label": "^2.1.7",
+    "react-native-safe-area-context": "^5.6.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",

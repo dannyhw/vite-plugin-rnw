@@ -2,7 +2,7 @@ import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { SafeAreaView } from "react-native";
+import { View } from "react-native";
 
 export const DatePicker = () => {
   const [date, setDate] = useState(new Date(1598051730000));
@@ -15,7 +15,7 @@ export const DatePicker = () => {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       {/* this basically just exists to show that stripping flow types works */}
       <DateTimePicker
         testID="dateTimePicker"
@@ -24,6 +24,6 @@ export const DatePicker = () => {
         is24Hour={true}
         onChange={onChange}
       />
-    </SafeAreaView>
+    </View>
   );
 };

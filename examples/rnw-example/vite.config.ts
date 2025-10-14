@@ -8,6 +8,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    tsconfigPaths(),
     rnw({
       jsxRuntime: "automatic",
       jsxImportSource: "nativewind",
@@ -19,8 +20,8 @@ export default defineConfig({
         ],
       },
     }),
-    tsconfigPaths(),
   ],
+
   resolve: {
     alias: {
       // required for skia web

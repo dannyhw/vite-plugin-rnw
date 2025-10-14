@@ -145,17 +145,17 @@ export type ViteReactPluginApi = {
 
 const extensions = [
   ".web.mjs",
-  ".web.mts",
   ".web.js",
   ".web.ts",
-  ".web.tsx",
   ".web.jsx",
+  ".web.tsx",
+  ".web.mts",
   ".web.cjs",
   ".mjs",
-  ".mts",
   ".js",
   ".jsx",
   ".json",
+  ".mts",
   ".ts",
   ".tsx",
   ".cjs",
@@ -165,9 +165,9 @@ const extensions = [
 //   return new RegExp(`/node_modules/(?!${moduleNames.join("|")})`);
 // };
 
-const defaultIncludeRE = /\.(?:[tj]sx?|m[tj]s)$/;
+const defaultIncludeRE = /\.[tj]sx?$/;
 const defaultExcludeRE =
-  /\/node_modules\/(?!react-native|@react-native|expo|@expo|@rn-primitives|@react-native-community)/;
+  /\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
 const tsRE = /\.tsx?$/;
 
 const getInitialOptions = (opts: Options): Partial<vite.InlineConfig> => {
@@ -266,7 +266,7 @@ export function rnw(opts: Options = {}): Plugin[] {
             },
             plugins: [
               esbuildFlowPlugin(
-                new RegExp(/\.(flow|jsx?|mjs)$/),
+                new RegExp(/\.(flow|jsx?)$/),
                 (_path: string) => "jsx"
               ),
             ],

@@ -1,3 +1,4 @@
+import "./global.css";
 import { useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import Animated, {
@@ -7,13 +8,11 @@ import Animated, {
 } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { AnimatedLogo } from "./components/animated";
-import { DatePicker } from "./components/datepicker";
-import { ExpoImageExample } from "./components/expo-image";
+// import { DatePicker } from "./components/datepicker";
 import { Ball } from "./components/gesture";
 import { NWButton } from "./components/nativewind";
 import Toast2 from "./components/toast";
 import { SkiaLoader } from "./components/skialoader";
-import "./global.css";
 import { Label } from "./components/ui/label";
 import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 
@@ -87,7 +86,7 @@ export default function App() {
 
         <NWButton onPress={() => {}} text="nativewind button" />
 
-        <ExpoImageExample />
+        {/* <ExpoImageExample /> */}
 
         <Toast />
 
@@ -144,7 +143,7 @@ export default function App() {
           </View>
         </RadioGroup>
 
-        <DatePicker />
+        {/* <DatePicker /> */}
       </View>
     </View>
   );

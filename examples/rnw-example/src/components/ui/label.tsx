@@ -1,7 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Root, Text } from "@rn-primitives/label/dist/label";
-
-import type { TextProps, TextRef } from "@rn-primitives/label";
+import { type TextProps, type TextRef, Root, Text } from "@rn-primitives/label";
 import { Platform } from "react-native";
 import { remapProps } from "nativewind";
 
