@@ -43,12 +43,12 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "babel-plugin-react-compiler": "19.1.0-rc.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "rolldown": "1.0.0-beta.24",
-    "tsdown": "^0.12.9",
-    "vite": "^7.0.4"
+    "babel-plugin-react-compiler": "^1.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "rolldown": "1.0.0-beta.43",
+    "tsdown": "^0.15.7",
+    "vite": "^7.1.9"
   },
   "peerDependencies": {
     "react-native-web": "*",
@@ -62,9 +62,9 @@
     "@babel/plugin-transform-react-jsx-self": "^7.27.1",
     "@babel/plugin-transform-react-jsx-source": "^7.27.1",
     "@bunchtogether/vite-plugin-flow": "^1.0.2",
-    "@rolldown/pluginutils": "1.0.0-beta.24",
+    "@rolldown/pluginutils": "1.0.0-beta.43",
     "@types/babel__core": "^7.20.5",
-    "react-refresh": "^0.17.0",
+    "react-refresh": "^0.18.0",
     "vite-plugin-commonjs": "^0.10.4"
   }
 }

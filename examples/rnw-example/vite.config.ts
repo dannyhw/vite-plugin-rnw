@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 // yeah i don't know
 import { rnw } from "../../packages/vite-plugin-rnw/dist/index.cjs";
 import path from "node:path";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,10 +15,11 @@ export default defineConfig({
         presets: ["nativewind/babel"],
         plugins: [
           "@babel/plugin-proposal-export-namespace-from",
-          "react-native-reanimated/plugin",
+          "react-native-worklets/plugin",
         ],
       },
     }),
+    tsconfigPaths(),
   ],
   resolve: {
     alias: {

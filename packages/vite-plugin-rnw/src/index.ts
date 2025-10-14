@@ -144,17 +144,20 @@ export type ViteReactPluginApi = {
 };
 
 const extensions = [
+  ".web.mjs",
+  ".web.mts",
   ".web.js",
   ".web.ts",
   ".web.tsx",
-  ".web.mjs",
+  ".web.jsx",
   ".web.cjs",
+  ".mjs",
+  ".mts",
   ".js",
   ".jsx",
   ".json",
   ".ts",
   ".tsx",
-  ".mjs",
   ".cjs",
 ];
 
@@ -162,9 +165,9 @@ const extensions = [
 //   return new RegExp(`/node_modules/(?!${moduleNames.join("|")})`);
 // };
 
-const defaultIncludeRE = /\.[tj]sx?$/;
+const defaultIncludeRE = /\.(?:[tj]sx?|m[tj]s)$/;
 const defaultExcludeRE =
-  /\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
+  /\/node_modules\/(?!react-native|@react-native|expo|@expo|@rn-primitives|@react-native-community)/;
 const tsRE = /\.tsx?$/;
 
 const getInitialOptions = (opts: Options): Partial<vite.InlineConfig> => {
@@ -259,10 +262,11 @@ export function rnw(opts: Options = {}): Plugin[] {
             resolveExtensions: extensions,
             loader: {
               ".js": "jsx",
+              ".mjs": "jsx",
             },
             plugins: [
               esbuildFlowPlugin(
-                new RegExp(/\.(flow|jsx?)$/),
+                new RegExp(/\.(flow|jsx?|mjs)$/),
                 (_path: string) => "jsx"
               ),
             ],
@@ -277,7 +281,12 @@ export function rnw(opts: Options = {}): Plugin[] {
               {
                 name: "nativewind-fix",
                 async transform(code, id) {
-                  if (id.includes("react-native-css-interop")) {
+                  if (
+                    id.includes("react-native-css-interop") ||
+                    id.includes("react-native-css") ||
+                    id.includes("react-native-reanimated") ||
+                    id.includes("react-native-worklets")
+                  ) {
                     return { moduleSideEffects: "no-treeshake" };
                   }
                 },
@@ -520,11 +529,14 @@ export function rnw(opts: Options = {}): Plugin[] {
     {
       name: "treat-js-files-as-jsx",
       async transform(code, id) {
-        if (!id.match(/\.js$/)) return null;
-        return vite.transformWithEsbuild(code, id, {
-          loader: "jsx",
-          jsx: "automatic",
-        });
+        if (id.match(/\.js$/) || id.match(/\.mjs$/)) {
+          return vite.transformWithEsbuild(code, id, {
+            loader: "jsx",
+            jsx: "automatic",
+          });
+        }
+
+        return null;
       },
     },
 

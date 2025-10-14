@@ -14,10 +14,14 @@ import { NWButton } from "./components/nativewind";
 import Toast2 from "./components/toast";
 import { SkiaLoader } from "./components/skialoader";
 import "./global.css";
+import { Label } from "./components/ui/label";
+import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 
 export default function App() {
   const [count, setCount] = useState(0);
   const scale = useSharedValue(1);
+
+  const [value, setValue] = useState("comfortable");
 
   return (
     <View
@@ -104,6 +108,41 @@ export default function App() {
         >
           <SkiaLoader />
         </View>
+
+        <Text style={{ fontSize: 12, color: "white" }}>rn primitives</Text>
+
+        <RadioGroup value={value} onValueChange={setValue} className="dark">
+          <View className="flex flex-row items-center gap-3">
+            <RadioGroupItem value="default" id="r1" />
+            <Label
+              htmlFor="r1"
+              onPress={() => setValue("default")}
+              className="text-white"
+            >
+              Default
+            </Label>
+          </View>
+          <View className="flex flex-row items-center gap-3">
+            <RadioGroupItem value="comfortable" id="r2" />
+            <Label
+              htmlFor="r2"
+              onPress={() => setValue("comfortable")}
+              className="text-white"
+            >
+              Comfortable
+            </Label>
+          </View>
+          <View className="flex flex-row items-center gap-3">
+            <RadioGroupItem value="compact" id="r3" />
+            <Label
+              htmlFor="r3"
+              onPress={() => setValue("compact")}
+              className="text-white"
+            >
+              Compact
+            </Label>
+          </View>
+        </RadioGroup>
 
         <DatePicker />
       </View>
