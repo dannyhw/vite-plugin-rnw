@@ -282,6 +282,14 @@ export function rnw(opts: Options = {}): Plugin[] {
                   }
                 },
               },
+              {
+                name: 'expo-modules-core-fix',
+                async transform(code, id) {
+                  if (id.includes('expo-modules-core')) {
+                    return { moduleSideEffects: 'no-treeshake' };
+                  }
+                },
+              }
             ],
           },
         },
