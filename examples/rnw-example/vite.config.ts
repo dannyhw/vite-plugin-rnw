@@ -1,6 +1,4 @@
 import { defineConfig } from "vite";
-
-// yeah i don't know
 import { rnw } from "vite-plugin-rnw";
 import path from "node:path";
 
