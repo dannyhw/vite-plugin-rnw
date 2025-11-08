@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import ToastComp from "./toast";
 import { View } from "react-native";
 import Toast from "react-native-toast-message";

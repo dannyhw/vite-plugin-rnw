@@ -1,11 +1,11 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import { viteFinal as reactViteFinal } from "@storybook/react-vite/preset";
 import { InlineConfig } from "vite";
-import { rnw } from "../../../packages/vite-plugin-rnw/dist/index.cjs";
+import { rnw } from "../../../packages/vite-plugin-rnw/dist/index.js";
 
 export const viteFinal: StorybookConfig["viteFinal"] = async (
   config,
-  options
+  options,
 ) => {
   const { mergeConfig } = await import("vite");
 
@@ -16,7 +16,7 @@ export const viteFinal: StorybookConfig["viteFinal"] = async (
 
   const { plugins = [], ...reactConfigWithoutPlugins } = await reactViteFinal(
     config,
-    options
+    options,
   );
 
   return mergeConfig(reactConfigWithoutPlugins, {
@@ -39,5 +39,5 @@ export const viteFinal: StorybookConfig["viteFinal"] = async (
 
 export const core = {
   builder: "@storybook/builder-vite",
-  renderer: "@storybook/react",
+  renderer: "@storybook/react-vite",
 };
