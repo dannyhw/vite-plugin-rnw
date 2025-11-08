@@ -48,6 +48,7 @@
     "@bunchtogether/vite-plugin-flow": "^1.0.2",
     "@rolldown/pluginutils": "1.0.0-beta.46",
     "@vitejs/plugin-react": "^5.1.0",
+    "magic-string": "^0.30.11",
     "vite-plugin-commonjs": "^0.10.4"
   }
 }

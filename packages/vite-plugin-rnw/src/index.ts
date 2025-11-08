@@ -5,7 +5,7 @@ import { esbuildFlowPlugin, flowPlugin } from "@bunchtogether/vite-plugin-flow";
 import commonjs from "vite-plugin-commonjs";
 import type { Plugin } from "vite";
 import { makeIdFiltersToMatchWithQuery } from "@rolldown/pluginutils";
-import { transformReanimatedWebUtils } from "./transforms";
+import { transformReanimatedWebUtilsWithMap } from "./transforms";
 import react, { type Options } from "@vitejs/plugin-react";
 
 const extensions = [
@@ -114,17 +114,19 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
         const [filepath] = id.split("?");
         if (!filter(filepath)) return;
 
-        let toTransform = code;
-
         // Apply React Native Reanimated webUtils transformation if needed
-        toTransform = transformReanimatedWebUtils(
-          toTransform,
+        const transformResult = transformReanimatedWebUtilsWithMap(
           code,
           id,
           isProduction,
+          {
+            source: filepath,
+          },
         );
 
-        return { code: toTransform };
+        if (!transformResult.changed) return null;
+
+        return { code: transformResult.code, map: transformResult.map };
       },
     },
   };

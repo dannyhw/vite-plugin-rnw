@@ -1,68 +1,96 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { transformReanimatedWebUtils } from "./transforms.ts";
+import { transformReanimatedWebUtilsWithMap } from "./transforms.ts";
 
 describe("transformReanimatedWebUtils", () => {
+  test("withMap returns map only when code changes", () => {
+    const webUtilsPath =
+      "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js";
+
+    // Unchanged case
+    const unchanged = "export let foo;";
+    const resUnchanged = transformReanimatedWebUtilsWithMap(
+      unchanged,
+      "some/other/file.js",
+      true,
+    );
+    assert.equal(resUnchanged.changed, false);
+    assert.equal(resUnchanged.map, null);
+    assert.equal(resUnchanged.code, unchanged);
+
+    // Changed case
+    const originalCode = `export let createTransformValue;
+try {
+  createTransformValue = require('react-native-web/dist/exports/StyleSheet/preprocess').createTransformValue;
+} catch (e) {}`;
+    const expected = `
+
+export { createTransformValue as createTransformValue } from 'react-native-web/dist/exports/StyleSheet/preprocess';
+`;
+    const resChanged = transformReanimatedWebUtilsWithMap(
+      originalCode,
+      webUtilsPath,
+      true,
+    );
+    assert.equal(resChanged.changed, true);
+    assert.ok(resChanged.map);
+    assert.equal(resChanged.code, expected);
+  });
   describe("when conditions are not met", () => {
     test("returns original code when not in production", () => {
       const code = "export let foo;";
-      const result = transformReanimatedWebUtils(code, code, "test.js", false);
-      assert.equal(result, code);
+      const result = transformReanimatedWebUtilsWithMap(code, "test.js", false);
+      assert.equal(result.code, code);
     });
 
     test("returns original code when not a reanimated file", () => {
       const code = "export let foo;";
-      const result = transformReanimatedWebUtils(
-        code,
+      const result = transformReanimatedWebUtilsWithMap(
         code,
         "some/other/file.js",
-        true
+        true,
       );
-      assert.equal(result, code);
+      assert.equal(result.code, code);
     });
 
     test("returns original code when not webUtils file", () => {
       const code = "export let foo;";
-      const result = transformReanimatedWebUtils(
-        code,
+      const result = transformReanimatedWebUtilsWithMap(
         code,
         "node_modules/react-native-reanimated/some/other/file.js",
-        true
+        true,
       );
-      assert.equal(result, code);
+      assert.equal(result.code, code);
     });
 
     test("returns original code when no export let pattern", () => {
       const code = 'export const foo = "bar";';
-      const result = transformReanimatedWebUtils(
-        code,
+      const result = transformReanimatedWebUtilsWithMap(
         code,
         "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-        true
+        true,
       );
-      assert.equal(result, code);
+      assert.equal(result.code, code);
     });
 
     test("returns original code when no try/catch pattern", () => {
       const code = "export let foo;";
-      const result = transformReanimatedWebUtils(
-        code,
+      const result = transformReanimatedWebUtilsWithMap(
         code,
         "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-        true
+        true,
       );
-      assert.equal(result, code);
+      assert.equal(result.code, code);
     });
 
     test("returns original code when no require pattern", () => {
       const code = 'export let foo;\ntry { foo = "bar"; } catch (e) {}';
-      const result = transformReanimatedWebUtils(
-        code,
+      const result = transformReanimatedWebUtilsWithMap(
         code,
         "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-        true
+        true,
       );
-      assert.equal(result, code);
+      assert.equal(result.code, code);
     });
   });
 
@@ -83,13 +111,12 @@ try {
 export { default as createReactDOMStyle } from 'react-native-web/dist/exports/StyleSheet/compiler/createReactDOMStyle';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("transforms single export let with named import", () => {
@@ -103,13 +130,12 @@ try {
 export { createTransformValue as createTransformValue } from 'react-native-web/dist/exports/StyleSheet/preprocess';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("transforms multiple export lets with mixed imports", () => {
@@ -139,13 +165,12 @@ export { createTransformValue as createTransformValue } from 'react-native-web/d
 export { createTextShadowValue as createTextShadowValue } from 'react-native-web/dist/exports/StyleSheet/preprocess';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("handles multiline assignment patterns", () => {
@@ -161,13 +186,12 @@ try {
 export { default as createReactDOMStyle } from 'react-native-web/dist/exports/StyleSheet/compiler/createReactDOMStyle';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("preserves other code while transforming", () => {
@@ -197,13 +221,12 @@ console.log('test');
 export { default as createReactDOMStyle } from 'react-native-web/dist/exports/StyleSheet/compiler/createReactDOMStyle';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("handles export let with no matching require statement", () => {
@@ -219,13 +242,12 @@ try {
 export { default as createReactDOMStyle } from 'react-native-web/dist/exports/StyleSheet/compiler/createReactDOMStyle';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
 
     test("removes nested try/catch blocks", () => {
@@ -240,17 +262,18 @@ try {
 
       // Our current regex doesn't handle nested blocks perfectly, but that's okay
       // for the real-world use case since React Native Reanimated doesn't use nested blocks
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
 
       // The transformation should still generate the correct export
-      assert.ok(result.includes("export { default as createReactDOMStyle }"));
+      assert.ok(
+        result.code.includes("export { default as createReactDOMStyle }"),
+      );
       // And it should remove the export let declaration
-      assert.ok(!result.includes("export let createReactDOMStyle"));
+      assert.ok(!result.code.includes("export let createReactDOMStyle"));
     });
 
     test("handles single quotes and double quotes in require statements", () => {
@@ -271,13 +294,12 @@ export { default as singleQuote } from 'react-native-web/dist/module1';
 export { default as doubleQuote } from 'react-native-web/dist/module2';
 `;
 
-      const result = transformReanimatedWebUtils(
-        originalCode,
+      const result = transformReanimatedWebUtilsWithMap(
         originalCode,
         webUtilsPath,
-        true
+        true,
       );
-      assert.equal(result, expected);
+      assert.equal(result.code, expected);
     });
   });
 });
@@ -292,14 +314,15 @@ try {
   foo = require('module-a').default;
 } catch (e) {}`;
 
-    const result = transformReanimatedWebUtils(
-      code,
+    const result = transformReanimatedWebUtilsWithMap(
       code,
       "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-      true
+      true,
     );
 
-    assert.ok(result.includes("export { default as foo } from 'module-a'"));
+    assert.ok(
+      result.code.includes("export { default as foo } from 'module-a'"),
+    );
   });
 
   test("removeTryCatchRequireBlocks removes patterns correctly", () => {
@@ -309,17 +332,16 @@ try {
 } catch (e) {}
 const keepThis = 'yes';`;
 
-    const result = transformReanimatedWebUtils(
-      code,
+    const result = transformReanimatedWebUtilsWithMap(
       code,
       "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-      true
+      true,
     );
 
-    assert.ok(!result.includes("try"));
-    assert.ok(!result.includes("catch"));
-    assert.ok(!result.includes("export let"));
-    assert.ok(result.includes("keepThis"));
+    assert.ok(!result.code.includes("try"));
+    assert.ok(!result.code.includes("catch"));
+    assert.ok(!result.code.includes("export let"));
+    assert.ok(result.code.includes("keepThis"));
   });
 
   test("generateDirectExports creates correct export syntax", () => {
@@ -333,18 +355,21 @@ try {
   namedExport = require('module-b').someExport;
 } catch (e) {}`;
 
-    const result = transformReanimatedWebUtils(
-      code,
+    const result = transformReanimatedWebUtilsWithMap(
       code,
       "node_modules/react-native-reanimated/lib/module/ReanimatedModule/js-reanimated/webUtils.web.js",
-      true
+      true,
     );
 
     assert.ok(
-      result.includes("export { default as defaultExport } from 'module-a'")
+      result.code.includes(
+        "export { default as defaultExport } from 'module-a'",
+      ),
     );
     assert.ok(
-      result.includes("export { someExport as namedExport } from 'module-b'")
+      result.code.includes(
+        "export { someExport as namedExport } from 'module-b'",
+      ),
     );
   });
 });

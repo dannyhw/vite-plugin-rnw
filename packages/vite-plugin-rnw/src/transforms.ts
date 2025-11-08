@@ -2,13 +2,15 @@
  * Code transformation utilities for fixing React Native package compatibility issues
  */
 
+import MagicString from "magic-string";
+
 /**
  * Analyzes require statements in code and maps them to module imports.
  * Handles patterns like: varName = require('path').prop or require('path').default
  */
 function analyzeRequireStatements(
   originalCode: string,
-  exportedVars: string[]
+  exportedVars: string[],
 ): Map<string, string[]> {
   const importMap = new Map<string, string[]>();
 
@@ -17,7 +19,7 @@ function analyzeRequireStatements(
     // Search in the original code, handles multiline assignments
     const requirePattern = new RegExp(
       `${varName}\\s*=\\s*[\\s\\S]*?require\\(['"]([^'"]+)['"]\\)(?:\\.([\\w]+))?`,
-      "g"
+      "g",
     );
     const requireMatch = requirePattern.exec(originalCode);
 
@@ -38,18 +40,7 @@ function analyzeRequireStatements(
  * Removes try/catch blocks that contain require statements and export let declarations.
  * This cleans up the problematic CommonJS patterns.
  */
-function removeTryCatchRequireBlocks(code: string): string {
-  // Remove all try/catch blocks that contain require statements
-  let transformed = code.replace(
-    /try\s*\{[^{}]*?require\([^)]+\)[^{}]*?\}\s*catch[^{}]*?\{[^{}]*?\}/gs,
-    ""
-  );
-
-  // Remove all export let declarations
-  transformed = transformed.replace(/export let \w+;/g, "");
-
-  return transformed;
-}
+// (Inlined directly in transform to accurately preserve sourcemaps)
 
 /**
  * Generates direct export statements from the import map.
@@ -80,50 +71,78 @@ function generateDirectExports(importMap: Map<string, string[]>): string {
 /**
  * Transforms React Native Reanimated webUtils files to fix problematic
  * export let + try/catch + require patterns by converting them to proper ESM.
- * 
+ *
  * This transformation handles the incompatible module patterns in React Native Reanimated
  * that cause build errors in Vite due to mixing CommonJS require() with ESM exports.
  */
-export function transformReanimatedWebUtils(
-  toTransform: string,
-  originalCode: string,
+export function transformReanimatedWebUtilsWithMap(
+  code: string,
   id: string,
-  isProduction: boolean
-): string {
+  isProduction: boolean,
+  opts?: { sourcemap?: boolean; source?: string },
+): { code: string; map: any | null; changed: boolean } {
   // Only apply transformation to React Native Reanimated webUtils files in production
   if (
     !isProduction ||
     !id.includes("node_modules/react-native-reanimated") ||
     !id.includes("ReanimatedModule/js-reanimated/webUtils") ||
-    !originalCode.includes("export let") ||
-    !originalCode.includes("try") ||
-    !originalCode.includes("require")
+    !code.includes("export let") ||
+    !code.includes("try") ||
+    !code.includes("require")
   ) {
-    return toTransform;
+    return { code, map: null, changed: false };
   }
 
   // Extract all export let variable names generically
-  const exportLetMatches = Array.from(
-    originalCode.matchAll(/export let (\w+);/g)
-  );
+  const exportLetMatches = Array.from(code.matchAll(/export let (\w+);/g));
   const exportedVars = exportLetMatches.map((match) => match[1]);
 
   if (exportedVars.length === 0) {
-    return toTransform;
+    return { code, map: null, changed: false };
   }
 
   // Analyze require statements in original code before removing try/catch blocks
-  const importMap = analyzeRequireStatements(originalCode, exportedVars);
+  const importMap = analyzeRequireStatements(code, exportedVars);
 
-  // Remove problematic try/catch + require patterns and export let declarations
-  toTransform = removeTryCatchRequireBlocks(toTransform);
+  const ms = new MagicString(code);
+  let changed = false;
+
+  // Remove problematic try/catch + require patterns
+  for (const m of code.matchAll(
+    /try\s*\{[^{}]*?require\([^)]+\)[^{}]*?\}\s*catch[^{}]*?\{[^{}]*?\}/gs,
+  )) {
+    const start = m.index!;
+    const end = start + m[0].length;
+    ms.remove(start, end);
+    changed = true;
+  }
+
+  // Remove all export let declarations
+  for (const m of code.matchAll(/export let \w+;/g)) {
+    const start = m.index!;
+    const end = start + m[0].length;
+    ms.remove(start, end);
+    changed = true;
+  }
 
   // Generate clean direct export statements
   const exports = generateDirectExports(importMap);
 
   if (exports) {
-    toTransform = `${toTransform}\n${exports}`;
+    ms.append(`\n${exports}`);
+    changed = true;
   }
 
-  return toTransform;
+  if (!changed) {
+    return { code, map: null, changed: false };
+  }
+
+  const resultCode = ms.toString();
+  const map = ms.generateMap({
+    source: opts?.source ?? id.split("?")[0],
+    includeContent: true,
+    hires: true,
+  });
+
+  return { code: resultCode, map, changed: true };
 }
