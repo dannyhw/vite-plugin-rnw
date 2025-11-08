@@ -275,21 +275,16 @@ export function rnw(opts: Options = {}): Plugin[] {
             treeshake: "safest",
             plugins: [
               {
-                name: "nativewind-fix",
+                name: "treeshake-fix",
                 async transform(code, id) {
-                  if (id.includes("react-native-css-interop")) {
+                  if (
+                    id.includes("react-native-css-interop") ||
+                    id.includes("expo-modules-core")
+                  ) {
                     return { moduleSideEffects: "no-treeshake" };
                   }
                 },
               },
-              {
-                name: 'expo-modules-core-fix',
-                async transform(code, id) {
-                  if (id.includes('expo-modules-core')) {
-                    return { moduleSideEffects: 'no-treeshake' };
-                  }
-                },
-              }
             ],
           },
         },
