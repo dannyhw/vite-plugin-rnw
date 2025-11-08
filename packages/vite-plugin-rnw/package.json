@@ -2,9 +2,6 @@
   "version": "0.0.7",
   "name": "vite-plugin-rnw",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "author": "Daniel Williams",
   "description": "Vite plugin for React Native Web",
   "keywords": [
@@ -19,10 +16,7 @@
     "README.md"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
+    ".": "./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -43,12 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "babel-plugin-react-compiler": "19.1.0-rc.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "rolldown": "1.0.0-beta.24",
-    "tsdown": "^0.12.9",
-    "vite": "^7.0.4"
+    "tsdown": "^0.15.12"
   },
   "peerDependencies": {
     "react-native-web": "*",
@@ -56,15 +45,9 @@
     "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/plugin-transform-flow-strip-types": "^7.27.1",
-    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
-    "@babel/plugin-transform-react-jsx-self": "^7.27.1",
-    "@babel/plugin-transform-react-jsx-source": "^7.27.1",
     "@bunchtogether/vite-plugin-flow": "^1.0.2",
-    "@rolldown/pluginutils": "1.0.0-beta.24",
-    "@types/babel__core": "^7.20.5",
-    "react-refresh": "^0.17.0",
+    "@rolldown/pluginutils": "1.0.0-beta.46",
+    "@vitejs/plugin-react": "^5.1.0",
     "vite-plugin-commonjs": "^0.10.4"
   }
 }

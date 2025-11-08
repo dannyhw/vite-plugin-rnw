@@ -2,12 +2,7 @@
 
 A vite plugin for React Native Web projects.
 
-This plugin is based on the [react plugin](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md)
-
-- enable [Fast Refresh](https://www.npmjs.com/package/react-refresh) in development (requires react >= 16.9)
-- use the [automatic JSX runtime](https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
-- use custom Babel plugins/presets
-- small installation size
+This plugin uses the [react plugin](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) internally and applies a lot of fixes for react native web on top.
 
 ```js
 // vite.config.js
@@ -69,31 +64,3 @@ rnw({
   }
 })
 ```
-
-#### Proposed syntax
-
-If you are using ES syntax that are still in proposal status (e.g. class properties), you can selectively enable them with the `babel.parserOpts.plugins` option:
-
-```js
-rnw({
-  babel: {
-    parserOpts: {
-      plugins: ["decorators-legacy"],
-    },
-  },
-});
-```
-
-This option does not enable _code transformation_. That is handled by esbuild.
-
-**Note:** TypeScript syntax is handled automatically.
-
-Here's the [complete list of Babel parser plugins](https://babeljs.io/docs/en/babel-parser#ecmascript-proposalshttpsgithubcombabelproposals).
-
-## Consistent components exports
-
-For React refresh to work correctly, your file should only export React components. You can find a good explanation in the [Gatsby docs](https://www.gatsbyjs.com/docs/reference/local-development/fast-refresh/#how-it-works).
-
-If an incompatible change in exports is found, the module will be invalidated and HMR will propagate. To make it easier to export simple constants alongside your component, the module is only invalidated when their value changes.
-
-You can catch mistakes and get more detailed warning with this [eslint rule](https://github.com/ArnaudBarre/eslint-plugin-react-refresh).

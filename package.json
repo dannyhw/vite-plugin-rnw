@@ -11,7 +11,8 @@
     "example": "bun --filter rnw-example dev"
   },
   "devDependencies": {
-    "sherif": "^1.6.1"
+    "prettier": "^3.6.2",
+    "sherif": "^1.8.0"
   },
   "private": true,
   "packageManager": "bun@1.2.18"
