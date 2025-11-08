@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
 // yeah i don't know
-import { rnw } from "../../packages/vite-plugin-rnw/dist/index.cjs";
+import { rnw } from "vite-plugin-rnw";
 import path from "node:path";
 
 // https://vite.dev/config/
@@ -24,7 +24,7 @@ export default defineConfig({
       // required for skia web
       "react-native/Libraries/Image/AssetRegistry": path.resolve(
         __dirname,
-        "./stub.js"
+        "./stub.js",
       ),
     },
   },
