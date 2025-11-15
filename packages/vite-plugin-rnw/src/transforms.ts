@@ -146,3 +146,49 @@ export function transformReanimatedWebUtilsWithMap(
 
   return { code: resultCode, map, changed: true };
 }
+
+/**
+ * Transforms react-native-css-interop doctor check to always return true.
+ * Looks for:
+ *   return <react-native-css-interop-jsx-pragma-check /> === true;
+ * in node_modules/react-native-css-interop/dist/doctor.js and replaces with:
+ *   return true;
+ */
+export function transformCssInteropDoctorCheck(
+  code: string,
+  id: string,
+  opts?: { source?: string },
+): { code: string; map: any | null; changed: boolean } {
+  const isTargetFile = id.includes(
+    "node_modules/react-native-css-interop/dist/doctor.js",
+  );
+
+  if (!isTargetFile) {
+    return { code, map: null, changed: false };
+  }
+
+  const pattern =
+    /return\s*<react-native-css-interop-jsx-pragma-check\s*\/>\s*===\s*true\s*;/g;
+
+  if (!pattern.test(code)) {
+    return { code, map: null, changed: false };
+  }
+
+  const ms = new MagicString(code);
+  let match: RegExpExecArray | null;
+  pattern.lastIndex = 0;
+  while ((match = pattern.exec(code)) !== null) {
+    const start = match.index;
+    const end = start + match[0].length;
+    ms.overwrite(start, end, "return true;");
+  }
+
+  const resultCode = ms.toString();
+  const map = ms.generateMap({
+    source: opts?.source ?? id.split("?")[0],
+    includeContent: true,
+    hires: true,
+  });
+
+  return { code: resultCode, map, changed: true };
+}
