@@ -3,6 +3,9 @@ import { AnimatedLogo } from "./animated";
 
 const meta: Meta<typeof AnimatedLogo> = {
   component: AnimatedLogo,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export default meta;
