@@ -9,17 +9,19 @@ import { transformReanimatedWebUtilsWithMap } from "./transforms";
 import react, { type Options } from "@vitejs/plugin-react";
 
 const extensions = [
+  ".web.mjs",
   ".web.js",
+  ".web.mts",
   ".web.ts",
   ".web.tsx",
-  ".web.mjs",
   ".web.cjs",
+  ".mjs",
   ".js",
   ".jsx",
   ".json",
+  ".mts",
   ".ts",
   ".tsx",
-  ".mjs",
   ".cjs",
 ];
 
@@ -28,6 +30,19 @@ const defaultExcludeRE =
   /\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
 
 export type RnwOptions = Options;
+
+const getJsxOption = (jsxRuntime: Options["jsxRuntime"]) => {
+  const jsxOptionMapping = {
+    automatic: "automatic",
+    classic: "transform",
+  } as const;
+
+  const jsxOption =
+    jsxRuntime && jsxRuntime in jsxOptionMapping
+      ? jsxOptionMapping[jsxRuntime]
+      : "automatic";
+  return jsxOption;
+};
 
 export function rnw(opts: RnwOptions = {}): Plugin[] {
   const include = opts.include ?? defaultIncludeRE;
@@ -58,6 +73,8 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
         optimizeDeps: {
           esbuildOptions: {
             resolveExtensions: extensions,
+            jsx: getJsxOption(opts.jsxRuntime),
+            jsxImportSource: opts.jsxImportSource,
             loader: {
               ".js": "jsx",
               ".mjs": "jsx",
@@ -139,9 +156,12 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
       name: "treat-js-files-as-jsx",
       async transform(code, id) {
         if (id.match(/\.js$/) || id.match(/\.mjs$/)) {
+          const jsxOption = getJsxOption(opts.jsxRuntime);
+
           return vite.transformWithEsbuild(code, id, {
             loader: "jsx",
-            jsx: "automatic",
+            jsx: jsxOption,
+            jsxImportSource: opts.jsxImportSource,
           });
         }
 
