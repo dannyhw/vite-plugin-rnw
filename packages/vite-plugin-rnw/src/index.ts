@@ -5,7 +5,10 @@ import { esbuildFlowPlugin, flowPlugin } from "@bunchtogether/vite-plugin-flow";
 import commonjs from "vite-plugin-commonjs";
 import type { Plugin } from "vite";
 import { makeIdFiltersToMatchWithQuery } from "@rolldown/pluginutils";
-import { transformReanimatedWebUtilsWithMap } from "./transforms";
+import {
+  transformReanimatedWebUtilsWithMap,
+  transformCssInteropDoctorCheck,
+} from "./transforms";
 import react, { type Options } from "@vitejs/plugin-react";
 
 const extensions = [
@@ -130,6 +133,17 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
       async handler(code, id, options) {
         const [filepath] = id.split("?");
         if (!filter(filepath)) return;
+
+        // First, fix react-native-css-interop doctor check
+        const cssInteropResult = transformCssInteropDoctorCheck(code, id, {
+          source: filepath,
+        });
+        if (cssInteropResult.changed) {
+          return {
+            code: cssInteropResult.code,
+            map: cssInteropResult.map,
+          };
+        }
 
         // Apply React Native Reanimated webUtils transformation if needed
         const transformResult = transformReanimatedWebUtilsWithMap(
