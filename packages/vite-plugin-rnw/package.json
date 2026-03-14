@@ -15,8 +15,13 @@
     "LICENSE",
     "README.md"
   ],
+  "types": "./dist/index.d.mts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
   },
   "repository": {
     "type": "git",
