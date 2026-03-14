@@ -1,5 +1,5 @@
 {
-  "version": "0.0.10",
+  "version": "0.0.11-next-0",
   "name": "vite-plugin-rnw",
   "type": "module",
   "author": "Daniel Williams",
