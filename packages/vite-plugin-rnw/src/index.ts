@@ -238,6 +238,7 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
     }),
     {
       name: "treat-js-files-as-jsx",
+      enforce: "pre",
       async transform(code, id) {
         if (id.match(/\.js$/) || id.match(/\.mjs$/)) {
           const jsxOption = getJsxOption(opts.jsxRuntime);
