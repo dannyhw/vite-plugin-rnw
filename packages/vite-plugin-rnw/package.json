@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "tsdown": "^0.15.12",
+    "tsdown": "^0.21.2",
     "vite": "^8.0.0"
   },
   "peerDependencies": {
