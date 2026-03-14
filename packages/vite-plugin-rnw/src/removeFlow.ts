@@ -108,7 +108,7 @@ export function esbuildFlowPlugin(
   } satisfies EsbuildPlugin;
 }
 
-export function esbuildRollDownPlugin(
+export function rollDownFlowPlugin(
   filter: RegExp = /\.(flow|jsx?)$/,
   loaderFunction: (path: string) => Loader = defaultLoaderFunction,
   flowOptions: FlowOptions = defaultFlowOptions,

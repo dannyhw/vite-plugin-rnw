@@ -15,7 +15,7 @@ import {
 import react, { type Options } from "@vitejs/plugin-react";
 import {
   esbuildFlowPlugin,
-  esbuildRollDownPlugin,
+  rollDownFlowPlugin,
   flowPlugin,
 } from "./removeFlow";
 
@@ -125,7 +125,7 @@ function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
           ".mjs": "jsx",
         },
         plugins: [
-          esbuildRollDownPlugin(
+          rollDownFlowPlugin(
             new RegExp(/\.(flow|jsx?)$/),
             (_path: string) => "jsx",
           ),
