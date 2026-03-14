@@ -49,7 +49,7 @@ export default function App() {
           setCount((count) => count + 1);
           scale.value = withSequence(
             withTiming(1.2, { duration: 200 }),
-            withTiming(1, { duration: 200 })
+            withTiming(1, { duration: 200 }),
           );
         }}
       >
