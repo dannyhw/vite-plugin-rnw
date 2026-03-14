@@ -37,18 +37,19 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "tsdown": "^0.15.12"
+    "tsdown": "^0.15.12",
+    "vite": "^8.0.0"
   },
   "peerDependencies": {
     "react-native-web": "*",
     "typescript": "^5",
-    "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
+    "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
   },
   "dependencies": {
-    "@bunchtogether/vite-plugin-flow": "^1.0.2",
-    "@rolldown/pluginutils": "1.0.0-beta.46",
-    "@vitejs/plugin-react": "^5.1.0",
-    "magic-string": "^0.30.11",
+    "flow-remove-types": "^2.305.0",
+    "@rolldown/pluginutils": "^1.0.0-rc.9",
+    "@vitejs/plugin-react": "^5.2.0",
+    "magic-string": "^0.30.21",
     "vite-plugin-commonjs": "^0.10.4"
   }
 }

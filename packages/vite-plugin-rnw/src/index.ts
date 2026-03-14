@@ -1,15 +1,33 @@
-import { createFilter } from "vite";
+import {
+  createFilter,
+  version as viteVersion,
+  type DepOptimizationOptions,
+} from "vite";
 import * as vite from "vite";
-// @ts-expect-error no types
-import { esbuildFlowPlugin, flowPlugin } from "@bunchtogether/vite-plugin-flow";
+
 import commonjs from "vite-plugin-commonjs";
-import type { Plugin } from "vite";
+import type { BuildOptions, Plugin } from "vite";
 import { makeIdFiltersToMatchWithQuery } from "@rolldown/pluginutils";
 import {
   transformReanimatedWebUtilsWithMap,
   transformCssInteropDoctorCheck,
 } from "./transforms";
 import react, { type Options } from "@vitejs/plugin-react";
+import {
+  esbuildFlowPlugin,
+  esbuildRollDownPlugin,
+  flowPlugin,
+} from "./removeFlow";
+
+const shouldUseRolldownOptions = () => {
+  try {
+    return Number(viteVersion.split(".")[0]) >= 8;
+  } catch {
+    return false;
+  }
+};
+
+const shouldUseRollDown = shouldUseRolldownOptions();
 
 const extensions = [
   ".web.mjs",
@@ -47,7 +65,94 @@ const getJsxOption = (jsxRuntime: Options["jsxRuntime"]) => {
   return jsxOption;
 };
 
-export function rnw(opts: RnwOptions = {}): Plugin[] {
+const treeshakePlugin = {
+  name: "treeshake-fix",
+  async transform(_code: string, id: string) {
+    if (
+      id.includes("react-native-css-interop") ||
+      id.includes("react-native-css") ||
+      id.includes("expo-modules-core")
+    ) {
+      return { moduleSideEffects: "no-treeshake" };
+    }
+  },
+} satisfies vite.Rolldown.Plugin;
+
+// safest tree-shaking preset
+const treeshakeSafePreset = {
+  annotations: true,
+  invalidImportSideEffects: true,
+  manualPureFunctions: [],
+  moduleSideEffects: true,
+  propertyReadSideEffects: "always",
+  unknownGlobalSideEffects: true,
+  propertyWriteSideEffects: "always",
+} satisfies vite.Rolldown.TreeshakingOptions;
+
+function getBuildOptions(): BuildOptions {
+  if (shouldUseRollDown) {
+    return {
+      rolldownOptions: {
+        shimMissingExports: true,
+        treeshake: treeshakeSafePreset,
+        plugins: [treeshakePlugin],
+      },
+    } satisfies BuildOptions;
+  }
+
+  return {
+    rollupOptions: {
+      shimMissingExports: true,
+      treeshake: treeshakeSafePreset,
+      plugins: [treeshakePlugin],
+    },
+  } satisfies BuildOptions;
+}
+
+function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
+  if (shouldUseRollDown) {
+    return {
+      rolldownOptions: {
+        resolve: { extensions },
+        transform: {
+          jsx: {
+            importSource: opts.jsxImportSource,
+            runtime: opts.jsxRuntime,
+          },
+        },
+        moduleTypes: {
+          ".js": "jsx",
+          ".mjs": "jsx",
+        },
+        plugins: [
+          esbuildRollDownPlugin(
+            new RegExp(/\.(flow|jsx?)$/),
+            (_path: string) => "jsx",
+          ),
+        ],
+      },
+    } satisfies DepOptimizationOptions;
+  }
+  return {
+    esbuildOptions: {
+      resolveExtensions: extensions,
+      jsx: getJsxOption(opts.jsxRuntime),
+      jsxImportSource: opts.jsxImportSource,
+      loader: {
+        ".js": "jsx",
+        ".mjs": "jsx",
+      },
+      plugins: [
+        esbuildFlowPlugin(
+          new RegExp(/\.(flow|jsx?)$/),
+          (_path: string) => "jsx",
+        ),
+      ],
+    },
+  } satisfies DepOptimizationOptions;
+}
+
+export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
   const include = opts.include ?? defaultIncludeRE;
   const exclude = opts.exclude ?? defaultExcludeRE;
   const filter = createFilter(include, exclude);
@@ -73,44 +178,9 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
           "global.Error": "Error",
         },
 
-        optimizeDeps: {
-          esbuildOptions: {
-            resolveExtensions: extensions,
-            jsx: getJsxOption(opts.jsxRuntime),
-            jsxImportSource: opts.jsxImportSource,
-            loader: {
-              ".js": "jsx",
-              ".mjs": "jsx",
-            },
-            plugins: [
-              esbuildFlowPlugin(
-                new RegExp(/\.(flow|jsx?)$/),
-                (_path: string) => "jsx",
-              ),
-            ],
-          },
-        },
+        optimizeDeps: getOptimizeDepsOptions(opts),
 
-        build: {
-          rollupOptions: {
-            // Use safest tree-shaking preset to avoid compatibility issues
-            treeshake: "safest",
-            plugins: [
-              {
-                name: "treeshake-fix",
-                async transform(_code: string, id: string) {
-                  if (
-                    id.includes("react-native-css-interop") ||
-                    id.includes("react-native-css") ||
-                    id.includes("expo-modules-core")
-                  ) {
-                    return { moduleSideEffects: "no-treeshake" };
-                  }
-                },
-              },
-            ],
-          },
-        },
+        build: getBuildOptions(),
 
         resolve: {
           extensions,
@@ -171,6 +241,15 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
       async transform(code, id) {
         if (id.match(/\.js$/) || id.match(/\.mjs$/)) {
           const jsxOption = getJsxOption(opts.jsxRuntime);
+          if (shouldUseRollDown) {
+            return vite.transformWithOxc(code, id, {
+              lang: "jsx",
+              jsx: {
+                importSource: opts.jsxImportSource,
+                runtime: opts.jsxRuntime,
+              },
+            });
+          }
 
           return vite.transformWithEsbuild(code, id, {
             loader: "jsx",
@@ -182,11 +261,11 @@ export function rnw(opts: RnwOptions = {}): Plugin[] {
         return null;
       },
     },
-    commonjs(),
+    commonjs() as Plugin,
     rnwPlugin,
     react({
       ...opts,
       exclude,
-    }),
+    }) as Plugin[],
   ];
 }
