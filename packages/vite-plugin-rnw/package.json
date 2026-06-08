@@ -27,6 +27,7 @@
     "type": "git",
     "url": "git+https://github.com/dannyhw/vite-plugin-rnw.git"
   },
+  "homepage": "https://github.com/dannyhw/vite-plugin-rnw#readme",
   "bugs": {
     "url": "https://github.com/dannyhw/vite-plugin-rnw/issues"
   },
