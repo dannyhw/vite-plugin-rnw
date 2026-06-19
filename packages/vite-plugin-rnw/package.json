@@ -3,6 +3,7 @@
   "name": "vite-plugin-rnw",
   "type": "module",
   "author": "Daniel Williams",
+  "license": "MIT",
   "description": "Vite plugin for React Native Web",
   "keywords": [
     "vite",
