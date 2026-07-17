@@ -9,6 +9,9 @@
     "repo:fix": "sherif --fix",
     "build": "bun --filter vite-plugin-rnw build",
     "example": "bun --filter rnw-example dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version && bun install --lockfile-only",
+    "release": "bun run build && changeset publish",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
     "format": "oxfmt",
@@ -16,6 +19,7 @@
     "typecheck": "bun run --workspaces --if-present typecheck"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.1",
     "oxfmt": "^0.59.0",
     "oxlint": "^1.74.0",
     "sherif": "^1.13.0"

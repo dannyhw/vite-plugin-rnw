@@ -64,3 +64,13 @@ rnw({
   }
 })
 ```
+
+## Releasing
+
+Changesets manages package versions and npm publishing.
+
+1. Run `bun changeset` for each user-facing change and commit the generated file with the change.
+2. Merge changes into `main`. The release workflow creates or updates a `Version Packages` pull request.
+3. Merge the version pull request to publish the new version of `vite-plugin-rnw` to npm and create a GitHub release.
+
+The repository must have an `NPM_TOKEN` Actions secret with permission to publish `vite-plugin-rnw`.
