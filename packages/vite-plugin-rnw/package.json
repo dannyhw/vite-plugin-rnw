@@ -44,9 +44,8 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
-    "@typescript/native": "npm:typescript@^7.0.2",
     "tsdown": "^0.22.9",
-    "typescript": "~6.0.3",
+    "typescript": "~7.0.2",
     "vite": "^8.1.5"
   },
   "peerDependencies": {
