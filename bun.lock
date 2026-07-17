@@ -6,6 +6,7 @@
       "name": "dhw-rnw",
       "devDependencies": {
         "oxfmt": "^0.59.0",
+        "oxlint": "^1.74.0",
         "sherif": "^1.13.0",
       },
     },

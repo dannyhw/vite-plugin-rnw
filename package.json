@@ -9,13 +9,15 @@
     "repo:fix": "sherif --fix",
     "build": "bun --filter vite-plugin-rnw build",
     "example": "bun --filter rnw-example dev",
-    "lint": "bun --filter rnw-example lint",
-    "lint:fix": "bun --filter rnw-example lint:fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "typecheck": "bun run --workspaces --if-present typecheck"
   },
   "devDependencies": {
     "oxfmt": "^0.59.0",
+    "oxlint": "^1.74.0",
     "sherif": "^1.13.0"
   },
   "private": true,

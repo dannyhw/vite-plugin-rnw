@@ -216,7 +216,7 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
           exclude: makeIdFiltersToMatchWithQuery(exclude),
         },
       },
-      async handler(code, id, options) {
+      async handler(code, id, _options) {
         const [filepath] = id.split("?");
         if (!filter(filepath)) return;
 
