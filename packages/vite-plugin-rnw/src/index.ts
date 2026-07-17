@@ -57,6 +57,22 @@ const expoWebDefines = {
   "process.env.EXPO_OS": JSON.stringify("web"),
 };
 
+const getRuntimeDefines = (mode: string) => {
+  const development = mode === "development";
+
+  return {
+    global: "window",
+    DEV: JSON.stringify(development),
+    "global.__x": "{}",
+    _frameTimestamp: "undefined",
+    _WORKLET: "false",
+    __DEV__: JSON.stringify(development),
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || mode),
+    ...expoWebDefines,
+    "global.Error": "Error",
+  } satisfies Record<string, string>;
+};
+
 const getJsxOption = (jsxRuntime: Options["jsxRuntime"]) => {
   const jsxOptionMapping = {
     automatic: "automatic",
@@ -114,14 +130,17 @@ function getBuildOptions(): BuildOptions {
   } satisfies BuildOptions;
 }
 
-function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
+function getOptimizeDepsOptions(
+  opts: RnwOptions,
+  defines: Record<string, string>,
+): DepOptimizationOptions {
   if (shouldUseRollDown) {
     return {
       rolldownOptions: {
         shimMissingExports: true,
         resolve: { extensions },
         transform: {
-          define: expoWebDefines,
+          define: defines,
           jsx: {
             importSource: opts.jsxImportSource,
             runtime: opts.jsxRuntime,
@@ -142,7 +161,7 @@ function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
   }
   return {
     esbuildOptions: {
-      define: expoWebDefines,
+      define: defines,
       resolveExtensions: extensions,
       jsx: getJsxOption(opts.jsxRuntime),
       jsxImportSource: opts.jsxImportSource,
@@ -170,22 +189,12 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
     name: "vite:react-native-web-babel",
     enforce: "pre",
     config(_userConfig, { mode }) {
-      const development = mode === "development";
+      const defines = getRuntimeDefines(mode);
 
       return {
-        define: {
-          global: "window",
-          DEV: JSON.stringify(development),
-          "global.__x": {},
-          _frameTimestamp: undefined,
-          _WORKLET: false,
-          __DEV__: JSON.stringify(development),
-          "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || mode),
-          ...expoWebDefines,
-          "global.Error": "Error",
-        },
+        define: defines,
 
-        optimizeDeps: getOptimizeDepsOptions(opts),
+        optimizeDeps: getOptimizeDepsOptions(opts, defines),
 
         build: getBuildOptions(),
 
