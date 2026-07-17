@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 import { AnimatedLogo } from "./components/animated";
 import { DatePicker } from "./components/datepicker";
 import { ExpoImageExample } from "./components/expo-image";
+import { ExpoLogBoxExample } from "./components/expo-log-box";
 import { Ball } from "./components/gesture";
 import { NWButton } from "./components/nativewind";
 import Toast2 from "./components/toast";
@@ -47,9 +48,11 @@ export default function App() {
       <Pressable
         onPress={() => {
           setCount((count) => count + 1);
-          scale.value = withSequence(
-            withTiming(1.2, { duration: 200 }),
-            withTiming(1, { duration: 200 }),
+          scale.set(
+            withSequence(
+              withTiming(1.2, { duration: 200 }),
+              withTiming(1, { duration: 200 }),
+            ),
           );
         }}
       >
@@ -84,6 +87,8 @@ export default function App() {
         <NWButton onPress={() => {}} text="nativewind button" />
 
         <ExpoImageExample />
+
+        <ExpoLogBoxExample />
 
         <Toast />
 

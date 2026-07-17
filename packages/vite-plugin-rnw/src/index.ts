@@ -11,13 +11,13 @@ import { makeIdFiltersToMatchWithQuery } from "@rolldown/pluginutils";
 import {
   transformReanimatedWebUtilsWithMap,
   transformCssInteropDoctorCheck,
-} from "./transforms";
+} from "./transforms.ts";
 import react, { type Options } from "@vitejs/plugin-react";
 import {
   esbuildFlowPlugin,
   rollDownFlowPlugin,
   flowPlugin,
-} from "./removeFlow";
+} from "./removeFlow.ts";
 
 const shouldUseRolldownOptions = () => {
   try {
@@ -51,6 +51,11 @@ const defaultExcludeRE =
   /\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
 
 export type RnwOptions = Options;
+
+const expoWebDefines = {
+  EXPO_OS: JSON.stringify("web"),
+  "process.env.EXPO_OS": JSON.stringify("web"),
+};
 
 const getJsxOption = (jsxRuntime: Options["jsxRuntime"]) => {
   const jsxOptionMapping = {
@@ -113,8 +118,10 @@ function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
   if (shouldUseRollDown) {
     return {
       rolldownOptions: {
+        shimMissingExports: true,
         resolve: { extensions },
         transform: {
+          define: expoWebDefines,
           jsx: {
             importSource: opts.jsxImportSource,
             runtime: opts.jsxRuntime,
@@ -135,6 +142,7 @@ function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
   }
   return {
     esbuildOptions: {
+      define: expoWebDefines,
       resolveExtensions: extensions,
       jsx: getJsxOption(opts.jsxRuntime),
       jsxImportSource: opts.jsxImportSource,
@@ -173,8 +181,7 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
           _WORKLET: false,
           __DEV__: JSON.stringify(development),
           "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || mode),
-          EXPO_OS: JSON.stringify("web"),
-          "process.env.EXPO_OS": JSON.stringify("web"),
+          ...expoWebDefines,
           "global.Error": "Error",
         },
 

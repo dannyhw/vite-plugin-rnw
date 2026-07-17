@@ -43,20 +43,20 @@
     "node": "^14.18.0 || >=16.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22",
-    "tsdown": "^0.21.2",
-    "typescript": "^5",
-    "vite": "^8.0.0"
+    "@types/node": "^26.1.1",
+    "tsdown": "^0.22.9",
+    "typescript": "~6.0.3",
+    "vite": "^8.1.5"
   },
   "peerDependencies": {
     "react-native-web": "*",
     "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
   },
   "dependencies": {
-    "flow-remove-types": "^2.305.0",
-    "@rolldown/pluginutils": "^1.0.0-rc.9",
+    "@rolldown/pluginutils": "^1.0.1",
     "@vitejs/plugin-react": "^5.2.0",
-    "magic-string": "^0.30.21",
+    "flow-remove-types": "^2.322.0",
+    "magic-string": "^1.0.0",
     "vite-plugin-commonjs": "^0.10.4"
   }
 }

@@ -1,8 +1,10 @@
+import nativewindPreset from "nativewind/preset";
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: "class",
-  presets: [require("nativewind/preset")],
+  presets: [nativewindPreset],
   theme: {
     extend: {},
   },
