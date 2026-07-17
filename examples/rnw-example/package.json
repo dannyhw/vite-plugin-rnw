@@ -38,6 +38,7 @@
     "@types/node": "^26.1.1",
     "@types/react": "~19.2.16",
     "@types/react-dom": "^19.2.3",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "chromatic": "^18.0.1",
     "eslint": "^10.7.0",
     "eslint-plugin-react-hooks": "^7.1.1",
