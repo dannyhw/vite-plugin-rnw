@@ -6,7 +6,10 @@ export default function SkiaExample() {
   const height = 256;
   const r = width * 0.33;
   return (
-    <Canvas style={{ width, height }}>
+    <Canvas
+      style={{ width, height }}
+      __destroyWebGLContextAfterRender={true}
+    >
       <Group blendMode="multiply">
         <Circle cx={r} cy={r} r={r} color="cyan" />
         <Circle cx={width - r} cy={r} r={r} color="magenta" />
