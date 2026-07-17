@@ -1,7 +1,4 @@
-import type {
-  CanvasKit,
-  CanvasKitInitOptions,
-} from "canvaskit-wasm";
+import type { CanvasKit, CanvasKitInitOptions } from "canvaskit-wasm";
 import canvasKitUrl from "canvaskit-wasm/bin/full/canvaskit.js?url";
 import { lazy, Suspense } from "react";
 import { Text } from "react-native";

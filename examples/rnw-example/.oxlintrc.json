@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error"
+  },
+  "plugins": ["eslint", "typescript", "react", "unicorn", "oxc"],
+  "env": {
+    "browser": true
+  },
+  "ignorePatterns": ["dist", "tailwind.config.js", "postcss.config.js"],
+  "rules": {
+    "typescript/no-require-imports": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "react/react-compiler": "error"
+  }
+}

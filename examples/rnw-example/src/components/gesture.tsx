@@ -1,8 +1,5 @@
 import { StyleSheet } from "react-native";
-import {
-  GestureDetector,
-  usePanGesture,
-} from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
