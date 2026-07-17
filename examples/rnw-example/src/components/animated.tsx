@@ -11,12 +11,12 @@ export const AnimatedLogo = () => {
   const rotate = useSharedValue(0);
 
   useEffect(() => {
-    rotate.value = withRepeat(withTiming(360, { duration: 3000 }), -1, false);
+    rotate.set(withRepeat(withTiming(360, { duration: 3000 }), -1, false));
   }, [rotate]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ rotate: `${rotate.value}deg` }],
+      transform: [{ rotate: `${rotate.get()}deg` }],
     };
   });
 

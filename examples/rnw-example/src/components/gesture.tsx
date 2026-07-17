@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -21,35 +21,43 @@ export function Ball() {
   const offset = useSharedValue({ x: 0, y: 0 });
 
   const animatedStyles = useAnimatedStyle(() => {
+    const position = offset.get();
+    const pressed = isPressed.get();
+
     return {
       transform: [
-        { translateX: offset.value.x },
-        { translateY: offset.value.y },
-        { scale: withSpring(isPressed.value ? 1.2 : 1) },
+        { translateX: position.x },
+        { translateY: position.y },
+        { scale: withSpring(pressed ? 1.2 : 1) },
       ],
-      backgroundColor: isPressed.value ? "yellow" : "blue",
+      backgroundColor: pressed ? "yellow" : "blue",
     };
   });
   const start = useSharedValue({ x: 0, y: 0 });
-  const gesture = Gesture.Pan()
-    .onBegin(() => {
-      isPressed.value = true;
-    })
-    .onUpdate((e) => {
-      offset.value = {
-        x: e.translationX + start.value.x,
-        y: e.translationY + start.value.y,
-      };
-    })
-    .onEnd(() => {
-      start.value = {
-        x: offset.value.x,
-        y: offset.value.y,
-      };
-    })
-    .onFinalize(() => {
-      isPressed.value = false;
-    });
+  const gesture = usePanGesture({
+    onBegin: () => {
+      isPressed.set(true);
+    },
+    onUpdate: (e) => {
+      const startPosition = start.get();
+
+      offset.set({
+        x: e.translationX + startPosition.x,
+        y: e.translationY + startPosition.y,
+      });
+    },
+    onDeactivate: () => {
+      const position = offset.get();
+
+      start.set({
+        x: position.x,
+        y: position.y,
+      });
+    },
+    onFinalize: () => {
+      isPressed.set(false);
+    },
+  });
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.ball, animatedStyles]} />

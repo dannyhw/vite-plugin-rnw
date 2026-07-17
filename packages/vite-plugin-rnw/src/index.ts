@@ -11,13 +11,13 @@ import { makeIdFiltersToMatchWithQuery } from "@rolldown/pluginutils";
 import {
   transformReanimatedWebUtilsWithMap,
   transformCssInteropDoctorCheck,
-} from "./transforms";
+} from "./transforms.ts";
 import react, { type Options } from "@vitejs/plugin-react";
 import {
   esbuildFlowPlugin,
   rollDownFlowPlugin,
   flowPlugin,
-} from "./removeFlow";
+} from "./removeFlow.ts";
 
 const shouldUseRolldownOptions = () => {
   try {
@@ -51,6 +51,27 @@ const defaultExcludeRE =
   /\/node_modules\/(?!react-native|@react-native|expo|@expo)/;
 
 export type RnwOptions = Options;
+
+const expoWebDefines = {
+  EXPO_OS: JSON.stringify("web"),
+  "process.env.EXPO_OS": JSON.stringify("web"),
+};
+
+const getRuntimeDefines = (mode: string) => {
+  const development = mode === "development";
+
+  return {
+    global: "window",
+    DEV: JSON.stringify(development),
+    "global.__x": "{}",
+    _frameTimestamp: "undefined",
+    _WORKLET: "false",
+    __DEV__: JSON.stringify(development),
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || mode),
+    ...expoWebDefines,
+    "global.Error": "Error",
+  } satisfies Record<string, string>;
+};
 
 const getJsxOption = (jsxRuntime: Options["jsxRuntime"]) => {
   const jsxOptionMapping = {
@@ -109,12 +130,17 @@ function getBuildOptions(): BuildOptions {
   } satisfies BuildOptions;
 }
 
-function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
+function getOptimizeDepsOptions(
+  opts: RnwOptions,
+  defines: Record<string, string>,
+): DepOptimizationOptions {
   if (shouldUseRollDown) {
     return {
       rolldownOptions: {
+        shimMissingExports: true,
         resolve: { extensions },
         transform: {
+          define: defines,
           jsx: {
             importSource: opts.jsxImportSource,
             runtime: opts.jsxRuntime,
@@ -135,6 +161,7 @@ function getOptimizeDepsOptions(opts: RnwOptions): DepOptimizationOptions {
   }
   return {
     esbuildOptions: {
+      define: defines,
       resolveExtensions: extensions,
       jsx: getJsxOption(opts.jsxRuntime),
       jsxImportSource: opts.jsxImportSource,
@@ -162,23 +189,12 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
     name: "vite:react-native-web-babel",
     enforce: "pre",
     config(_userConfig, { mode }) {
-      const development = mode === "development";
+      const defines = getRuntimeDefines(mode);
 
       return {
-        define: {
-          global: "window",
-          DEV: JSON.stringify(development),
-          "global.__x": {},
-          _frameTimestamp: undefined,
-          _WORKLET: false,
-          __DEV__: JSON.stringify(development),
-          "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || mode),
-          EXPO_OS: JSON.stringify("web"),
-          "process.env.EXPO_OS": JSON.stringify("web"),
-          "global.Error": "Error",
-        },
+        define: defines,
 
-        optimizeDeps: getOptimizeDepsOptions(opts),
+        optimizeDeps: getOptimizeDepsOptions(opts, defines),
 
         build: getBuildOptions(),
 
@@ -200,7 +216,7 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
           exclude: makeIdFiltersToMatchWithQuery(exclude),
         },
       },
-      async handler(code, id, options) {
+      async handler(code, id, _options) {
         const [filepath] = id.split("?");
         if (!filter(filepath)) return;
 

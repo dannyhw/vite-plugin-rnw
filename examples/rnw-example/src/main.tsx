@@ -8,5 +8,5 @@ createRoot(document.getElementById("root")!).render(
     <GestureHandlerRootView>
       <App />
     </GestureHandlerRootView>
-  </StrictMode>
+  </StrictMode>,
 );
