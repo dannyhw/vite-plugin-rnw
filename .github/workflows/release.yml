@@ -41,6 +41,3 @@ jobs:
           publish: bun run release
           title: "chore: release packages"
           version: bun run version-packages
-        env:
-          NPM_CONFIG_PROVENANCE: true
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

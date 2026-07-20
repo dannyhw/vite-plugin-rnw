@@ -73,4 +73,9 @@ Changesets manages package versions and npm publishing.
 2. Merge changes into `main`. The release workflow creates or updates a `Version Packages` pull request.
 3. Merge the version pull request to publish the new version of `vite-plugin-rnw` to npm and create a GitHub release.
 
-The repository must have an `NPM_TOKEN` Actions secret with permission to publish `vite-plugin-rnw`.
+The `vite-plugin-rnw` package must have an npm trusted publisher configured for GitHub Actions with:
+
+- Organization or user: `dannyhw`
+- Repository: `vite-plugin-rnw`
+- Workflow filename: `release.yml`
+- Allowed action: `npm publish`
