@@ -188,8 +188,17 @@ export function rnw(opts: RnwOptions = {}): Array<Plugin | Plugin[]> {
   const rnwPlugin: Plugin = {
     name: "vite:react-native-web-babel",
     enforce: "pre",
-    config(_userConfig, { mode }) {
-      const defines = getRuntimeDefines(mode);
+    config(userConfig, { mode }) {
+      const defines: Record<string, string> = { ...getRuntimeDefines(mode) };
+
+      // User-provided defines take precedence over the plugin defaults, and
+      // are propagated to dependency optimization so pre-bundled deps see the
+      // same values (e.g. a production build with `__DEV__: true`).
+      for (const [key, value] of Object.entries(userConfig.define ?? {})) {
+        if (key in defines) {
+          defines[key] = typeof value === "string" ? value : JSON.stringify(value);
+        }
+      }
 
       return {
         define: defines,
