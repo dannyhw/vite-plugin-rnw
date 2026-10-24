@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { test } from "node:test";
-import type { Plugin, UserConfig } from "vite";
+import { resolveConfig, type Plugin, type UserConfig } from "vite";
 
 import { rnw } from "./index.ts";
 
@@ -47,4 +50,34 @@ test("uses the runtime defines during dependency optimization", async () => {
     expectedDefines,
   );
   assert.equal(config.optimizeDeps?.rolldownOptions?.shimMissingExports, true);
+});
+
+test("resolves source files before JSON files with the same name", async () => {
+  // In Expo apps `app.json` sits next to `App.tsx`. On case-insensitive file
+  // systems `./App` must still resolve to the source file, as it does in Metro.
+  const root = await mkdtemp(path.join(tmpdir(), "vite-plugin-rnw-"));
+
+  try {
+    await writeFile(path.join(root, "App.tsx"), "export default 1;\n");
+    await writeFile(path.join(root, "App.json"), "{}\n");
+
+    const config = await resolveConfig(
+      { root, configFile: false, logLevel: "silent", plugins: [rnw()] },
+      "serve",
+    );
+
+    const jsonIndex = config.resolve.extensions.indexOf(".json");
+    for (const ext of [".mjs", ".js", ".jsx", ".mts", ".ts", ".tsx", ".cjs"]) {
+      assert.ok(
+        config.resolve.extensions.indexOf(ext) < jsonIndex,
+        `${ext} should resolve before .json`,
+      );
+    }
+
+    const resolve = config.createResolver();
+    const resolved = await resolve("./App", path.join(root, "index.ts"));
+    assert.equal(resolved && path.basename(resolved), "App.tsx");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

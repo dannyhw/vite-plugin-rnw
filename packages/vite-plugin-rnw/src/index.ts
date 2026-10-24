@@ -39,11 +39,14 @@ const extensions = [
   ".mjs",
   ".js",
   ".jsx",
-  ".json",
   ".mts",
   ".ts",
   ".tsx",
   ".cjs",
+  // Keep `.json` after all source extensions, matching Metro/Expo. Otherwise
+  // `import App from "./App"` resolves to `app.json` instead of `App.tsx` on
+  // case-insensitive file systems (Windows, default macOS).
+  ".json",
 ];
 
 const defaultIncludeRE = /\.[tj]sx?$/;
