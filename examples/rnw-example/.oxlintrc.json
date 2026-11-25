@@ -18,6 +18,10 @@
         "allowConstantExport": true
       }
     ],
-    "react/react-compiler": "error"
+    "react/immutability": "error",
+    "react/purity": "error",
+    "react/refs": "error",
+    "react/set-state-in-effect": "error",
+    "react/set-state-in-render": "error"
   }
 }
