@@ -21,7 +21,7 @@ export default defineConfig({
     alias: {
       // required for skia web
       "react-native/Libraries/Image/AssetRegistry": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "./stub.js",
       ),
     },
